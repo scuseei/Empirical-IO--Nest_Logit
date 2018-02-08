@@ -7,6 +7,7 @@
 	`ds.make_data()`
 	
     to generate the simulated data. Before that, please specify the parameters in the DataSimulator class, e.g.,
+    
     `J = 2, I = 500, T = 20`
     
     `(a1, a2, coff) = (0.0, 0.0, -1.0)`
