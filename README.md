@@ -11,4 +11,4 @@
 
  2. Once data (i.e., "Data_m.csv") were generated, click MaximumLikelihood.py to get the estimation results.
  
- 3. The final results are displayed in the Results.pdf
+ 3. The final results are displayed in the Results.txt
