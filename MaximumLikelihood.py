@@ -31,8 +31,6 @@ class Obj(object):
         Number of consumers J
     param4: int
         Number of consumers T
-    param5: int
-        Within-group correlation is (1 - SIG)
 
     Returns
     -------
@@ -40,13 +38,12 @@ class Obj(object):
         Log-likelihood
     """
 
-    def __init__(self, m, I, J, T, SIG):
+    def __init__(self, m, I, J, T):
         """Class initialization"""
         self.m = m
         self.I = I
         self.J = J
         self.T = T
-        self.SIG = SIG
 
     def __data_loader(self):
         """Function for loading the data
@@ -81,10 +78,10 @@ class Obj(object):
             The log likelihood function
         """
         # parameters initialized
-        intercept = params[:-1]
-        coefficient = params[-1]
+        intercept = params[:-2]
+        coefficient = params[-2]
+        SIG = params[-1]
         #
-        SIG = self.SIG
         I = self.I
         J = self.J
         T = self.T
@@ -103,8 +100,8 @@ class Obj(object):
                                     Z.loc[(i, t, j)]['Pjt']) /
                                    SIG)
             for j in range(1, J + 1):
-                Z.loc[(i, t, j), 'Pr(j)'] = np.power(temp_sum, SIG) / \
-                (1 + np.power(temp_sum, SIG)) * \
+                Z.loc[(i, t, j), 'Pr(j)'] = 1 / \
+                (1 + np.power(temp_sum, -SIG)) * \
                     np.exp((intercept[j - 1] + coefficient * \
                             Z.loc[(i, t, j)]['Pjt']) / SIG) / temp_sum
         # compute the log-likelihood, step 1
@@ -141,7 +138,7 @@ class Obj(object):
         return -LL
 
 
-def result_show(m, I, J, T, SIG, params):
+def result_show(m, I, J, T, params):
     """Function for Maximum Likelihood Estimation
 
     Parameters
@@ -154,23 +151,21 @@ def result_show(m, I, J, T, SIG, params):
         Number of consumers J
     param4: int
         Number of consumers T
-    param5: int
-        Within-group correlation is (1 - SIG)
-    param6: np.array
+    param5: np.array
         The initial value
 
     Return
     ------
         Print the estimation results
     """
-    obj = Obj(m, I, J, T, SIG)
+    obj = Obj(m, I, J, T)
     print('It needs some time to estimate...')
     result = minimize(
         obj.LL,
         params,
         method='L-BFGS-B',
         options={
-            'ftol': 0.01,
+            'gtol': 0.05,
             'disp': True})
     print('Estimation is done on the ' + str(m) + '-th dataset')
     print(result)
@@ -180,15 +175,14 @@ def main():
     """Main function
     """
     '''set parameters'''
-    m = 10
+    m = 3
     I = 500
     J = 2
-    T = 20
-    SIG = 1
+    T = 50
     # initial values
-    params = np.array(np.array([0.0, 0.0, -1.0]))
+    params = np.array(np.array([1.0, 1.0, 1.0, 1.0]))
     # print results
-    result_show(m, I, J, T, SIG, params)
+    result_show(m, I, J, T, params)
 
 
 if __name__ == "__main__":

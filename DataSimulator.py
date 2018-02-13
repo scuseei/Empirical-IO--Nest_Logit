@@ -129,8 +129,8 @@ class DataSimulator(object):
                                     price.loc[(j, t)]['Pjt']) /
                                    self.SIG)
             for j in range(1, self.J + 1):
-                price.loc[(j, t), 'Pr(j)'] = np.power(temp_sum, self.SIG) / \
-                    (1 + np.power(temp_sum, self.SIG)) * \
+                price.loc[(j, t), 'Pr(j)'] = 1 / \
+                    (1 + np.power(temp_sum, -self.SIG)) * \
                     np.exp((self.intercept[j - 1] + self.coefficient *
                             price.loc[(j, t)]['Pjt']) / self.SIG) / temp_sum
 
@@ -209,12 +209,12 @@ def main():
     '''set parameters'''
     I = 500
     J = 2
-    T = 20
-    pdf = ['Normal', 1, 0.3]
+    T = 50
+    pdf = ['Normal', 1, 0.2]
     intercept = np.zeros(J)
     coefficient = -1.0
-    M = 10
-    SIG = 1
+    M = 5
+    SIG = 0.55
 
     '''get simulation data'''
     ds = DataSimulator(
